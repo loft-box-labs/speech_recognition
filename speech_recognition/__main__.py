@@ -1,23 +1,43 @@
 # -*- coding: utf-8 -*-
 
+import json
+from json import JSONEncoder
 import sys
+import time
 import timeit
 
 import speech_recognition as sr
+
+class SpeechResponse(object):
+    class Encoder(JSONEncoder):
+        def default(self, o):
+            return o.__dict__
+
+    def __init__(self, service, transcription):
+        self.service = service
+        self.timespent = None
+        self.transcription = transcription
+
+    def __str__(self):
+        return str(self.serialize())
+
+    def serialize(self):
+        return self.__dict__
 
 class SpeechOptions(object):
     def __init__(self):
         self.recognizer = sr.Recognizer()
         self.microphone = sr.Microphone()
         self.audio = None
+        self.responses = []
 
     def print_response(self, service, value):
+        self.responses[-1]['alternatives'].append(SpeechResponse(service=service, transcription=value))
         print(u"\t'%s' \t%s" % (value, service))
 
     def sphinx(self):
         service = 'Sphinx'
-        phrases = [('Geltrex matrix', 1)]
-        value = self.recognizer.recognize_sphinx(self.audio, keyword_entries=phrases)
+        value = self.recognizer.recognize_sphinx(self.audio)
         self.print_response(service, value)
 
     def google(self):
@@ -26,8 +46,10 @@ class SpeechOptions(object):
         self.print_response(service, value)
 
     def google_cloud(self):
+        # with open('data/speech-context.json') as infile:
+        #     phrases = json.load(infile)['context']
         service = 'Google Cloud Speech Recognition'
-        phrases = ['shwazil hoful day', 'hoful']
+        phrases = ['geltrex basement mebrane', 'geltrex']
         value = self.recognizer.recognize_google_cloud(self.audio, preferred_phrases=phrases)
         self.print_response(service, value)
 
@@ -64,7 +86,9 @@ class SpeechOptions(object):
 
     def run_and_time(self, func):
         try:
-            print(round(timeit.timeit(func, number=1), 2))
+            time = round(timeit.timeit(func, number=1), 2)
+            self.responses[-1]['alternatives'][-1].timespent = time
+            print time
         except sr.UnknownValueError:
             print("Oops! Didn't catch that")
         except sr.RequestError as e:
@@ -76,11 +100,22 @@ class SpeechOptions(object):
             self.audio = self.recognizer.listen(source)
         statement = raw_input('What did you say? ')
 
+        self.responses.append({
+            'actual': statement,
+            'alternatives': []
+        })
+
         print('\n-------------------')
         print(statement)
         for func in [self.sphinx, self.google, self.google_cloud, self.bing, self.wit, self.houndify, self.ibm]:
             self.run_and_time(func)
         print('-------------------\n')
+
+    def store(self):
+        print json.dumps(self.responses, cls=SpeechResponse.Encoder)
+        filename = 'data/transcripts/%s.json' % int(time.time())
+        with open(filename, 'w') as outfile:
+            json.dump(self.responses, outfile, cls=SpeechResponse.Encoder)
 
 if __name__ == '__main__':
     options = SpeechOptions()
@@ -89,4 +124,5 @@ if __name__ == '__main__':
         try:
             options.test()
         except KeyboardInterrupt:
+            options.store()
             sys.exit(1)
