@@ -9,7 +9,7 @@ For LBL:
 - It'll ask you what you said
 - It'll then send that audio to PocketSphinx (running locally) and 6 different speech APIs.
 
-The ``speech_recognizer/__main.py__`` file is all that's different between this and the master project.
+The ``speech_recognizer/__main__.py`` file is all that's different between this and the master project.
 
 All keys, except for the Google Cloud Speech keys, are hardcoded. You probably have the Google Cloud Speech keys offhand, given our other work.
 
