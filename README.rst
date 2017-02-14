@@ -1,14 +1,18 @@
 
-# For LBL:
+For LBL:
+=================
 
-`pip install -r requirements.txt` from root. More instructions below.
+``pip install -r requirements.txt`` from root. More instructions below.
 
-`python -m speech_recognition` to run the speech recognizer. When you do that:
+``python -m speech_recognition`` to run the speech recognizer. When you do that:
+
 - You'll say something
 - It'll ask you what you said
 - It'll then send that audio to PocketSphinx (running locally) and 6 different speech APIs.
 
-All keys, except for the Goougle Cloud Speech keys, are hardcoded. You probably have the Google Cloud Speech keys offhand, given our other work.
+The ``speech_recognizer/__main.py__`` file is all that's different between this and the master project.
+
+All keys, except for the Google Cloud Speech keys, are hardcoded. You probably have the Google Cloud Speech keys offhand, given our other work.
 
 
 
@@ -16,7 +20,7 @@ All keys, except for the Goougle Cloud Speech keys, are hardcoded. You probably 
 
 
 
-
+----------------------------------------------------------
 
 
 
