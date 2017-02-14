@@ -1,7 +1,6 @@
 
 For LBL:
 =================
-
 ``pip install -r requirements.txt`` from root. More instructions below.
 
 ``python -m speech_recognition`` to run the speech recognizer. When you do that:
@@ -103,7 +102,7 @@ See the ``examples/`` `directory <https://github.com/Uberi/speech_recognition/tr
 Installing
 ----------
 
-First, make sure you have all the requirements listed in the "Requirements" section. 
+First, make sure you have all the requirements listed in the "Requirements" section.
 
 The easiest way to install this is using ``pip install SpeechRecognition``.
 
